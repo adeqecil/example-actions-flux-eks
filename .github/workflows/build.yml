@@ -1,6 +1,5 @@
 # build.yml
 on:
-  workflow_dispatch
   pull_request:
     paths:
     - app/**
