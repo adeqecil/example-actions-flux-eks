@@ -1,13 +1,13 @@
 # build.yml
-on:
-  pull_request:
-    paths:
-    - app/**
-  push:
-    paths:
-    - app/**
-    branches:         # array of glob patterns matching against refs/heads. Optional; defaults to all
-    - master          # triggers on pushes that contain changes in master
+on: workflow_dispatch
+  # pull_request:
+  #   paths:
+  #   - app/**
+  # push:
+  #   paths:
+  #   - app/**
+  #   branches:         # array of glob patterns matching against refs/heads. Optional; defaults to all
+  #   - master          # triggers on pushes that contain changes in master
 
 name: Build and Push to ECR
 
@@ -34,7 +34,7 @@ jobs:
     - name: Setup ECR
       run: |
         # Login to AWS ECR
-        $( aws ecr get-login-password | docker login -u AWS --password-stdin "https://$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.ap-southeast-2.amazonaws.com/example-eks" )
+        $( aws ecr get-login-password \| docker login -u AWS --password-stdin "https://$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.ap-southeast-2.amazonaws.com/example-eks" )
 
     - name: Build and tag the image
       run: |
