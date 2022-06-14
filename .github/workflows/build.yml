@@ -32,17 +32,34 @@ jobs:
 
     # Add steps here like linting, testing, minification, etc.
       
-    - name: Setup ECR
-      run: |
-        # Login to AWS ECR
-        $( docker login -u AWS --password $ECR_PASSWORD "https://$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.ap-southeast-2.amazonaws.com/example-eks" )
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-2
 
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
+    # - name: Setup ECR
+    #   run: |
+    #     # Login to AWS ECR
+    #     $( docker login -u AWS --password $ECR_PASSWORD "https://$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.ap-southeast-2.amazonaws.com/example-eks" )
+
+    
+    
     - name: Build and tag the image
-      run: |
         # Build and tag the image
-        docker build \
-          -t $CONTAINER_IMAGE \
-          -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
+      env:
+      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      ECR_REPOSITORY: docker_nodejs_demo
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$CONTAINER_IMAGE ./app
+      # docker build \
+      #   -t $CONTAINER_IMAGE \
+      #   -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
            
     # Add additional steps here like scanning of image
 
@@ -51,4 +68,5 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         # Push image to AWS ECR
-        docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$CONTAINER_IMAGE
+      #docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
