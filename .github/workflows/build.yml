@@ -53,8 +53,8 @@ jobs:
     - name: Build and tag the image
         # Build and tag the image
       env:
-      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      ECR_REPOSITORY: docker_nodejs_demo
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: example-eks
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$CONTAINER_IMAGE ./app
       # docker build \
