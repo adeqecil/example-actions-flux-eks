@@ -23,7 +23,7 @@ spec:
       containers:
       - name: aws-example-octodex
         # image: 00000000000000.dkr.ecr.my-region.amazonaws.com/example-eks:tag
-        image: 848092811199.dkr.ecr.ap-southeast-2.amazonaws.com/example-eks:example-eks
+        image: 848092811199.dkr.ecr.ap-southeast-2.amazonaws.com/example-eks:v1
         imagePullPolicy: "Always"
         ports:
         - containerPort: 80
